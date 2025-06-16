@@ -164,7 +164,9 @@ if audio_path:
     except Exception as e:
         st.warning(f"⚠️ No se pudo transcribir el audio: {e}")
 
-# Crear cliente OpenAI usando API key desde Streamlit Secrets
+# --- OPENAI GPT ANALYSIS (VERSIÓN NUEVA API >= 1.0.0) ---
+
+# Crear cliente con clave desde st.secrets
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 try:
@@ -199,10 +201,10 @@ Entrega un análisis estructurado con:
 1. Resumen emocional por etapa
 2. Análisis fisiológico (BPM)
 3. Coherencia entre lo que hace, dice y siente
-4. Reacciones emocionales específicas ante el producto físico observado: ¿qué partes del objeto (empaque, forma, color, textura) generan respuestas emocionales positivas o negativas?, ¿hay momentos clave de conexión o rechazo?
-5. Asociación entre lo que el usuario ve, dice y siente: ¿cómo responde emocionalmente a los estímulos visuales concretos?, ¿hay elementos que provocan sorpresa, agrado, confianza o incomodidad?, ¿qué implicaciones tiene esto para el diseño visual o sensorial?
+4. Reacciones emocionales específicas ante el producto físico observado
+5. Asociación entre lo que el usuario ve, dice y siente
 
-No repitas la tabla ni la narrativa. Escribe como si entregarás un informe profesional a una marca global.
+No repitas la tabla ni la narrativa. Escribe como si entregaras un informe profesional a una marca global.
 """
 
     response = client.chat.completions.create(
