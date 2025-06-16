@@ -7,11 +7,6 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 import openai
-from dotenv import load_dotenv
-import os
-
-load_dotenv()  # Carga variables desde el .env
-
 
 # --- VIDEO Y EMOCIONES ---
 import cv2
@@ -173,7 +168,7 @@ if audio_path:
 # --- Configurar el cliente OpenAI (versión nueva >=1.0.0) ---
 from openai import OpenAI
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 try:
     emocion_predominante = df["Emoción dominante"].mode()[0] if not df.empty else "indefinida"
