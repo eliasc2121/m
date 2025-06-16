@@ -7,6 +7,11 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 import openai
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Carga variables desde el .env
+
 
 # --- VIDEO Y EMOCIONES ---
 import cv2
