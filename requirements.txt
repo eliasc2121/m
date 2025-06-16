@@ -4,7 +4,6 @@ streamlit-webrtc
 
 # VISIÓN POR COMPUTADORA
 opencv-python==4.9.0.80
-mediapipe==0.10.9
 ultralytics==8.1.33
 Pillow>=5.2.0
 scikit-image>=0.22.0
