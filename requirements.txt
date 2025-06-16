@@ -3,7 +3,7 @@ opencv-python-headless==4.9.0.80
 deepface==0.0.91
 moviepy==1.0.3
 SpeechRecognition==3.8.1
-openai==1.14.3
+openai==0.28.1
 pandas>=1.5.3
 numpy>=1.23.5
 matplotlib>=3.10.3
