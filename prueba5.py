@@ -164,17 +164,16 @@ if audio_path:
     except Exception as e:
         st.warning(f"⚠️ No se pudo transcribir el audio: {e}")
 
+from openai import OpenAI
 
-# --- Configurar el cliente OpenAI con secrets (versión moderna) ---
-import openai
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+# Crear cliente OpenAI usando API key desde Streamlit Secrets
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 try:
     emocion_predominante = df["Emoción dominante"].mode()[0] if not df.empty else "indefinida"
     bpm_promedio = np.mean(df["BPM final"].dropna())
     tabla = df[["Segundo", "Emoción dominante", "BPM final"]].to_string(index=False)
 
-    # Validar narrativa y transcripción
     if narrativa.strip() == "":
         st.warning("⚠️ Escribe una narrativa manual antes de generar el informe.")
         st.stop()
@@ -182,7 +181,6 @@ try:
     if transcripcion.strip() == "":
         transcripcion = "(no se detectó audio válido)"
 
-    # Prompt para GPT con tabla, narrativa y transcripción
     prompt = f"""
 Eres un consultor experto en neuromarketing, comportamiento del consumidor y marketing sensorial. Analiza el siguiente estudio:
 
@@ -209,8 +207,7 @@ Entrega un análisis estructurado con:
 No repitas la tabla ni la narrativa. Escribe como si entregarás un informe profesional a una marca global.
 """
 
-    # Solicitud a OpenAI
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "Eres un experto en neuromarketing y marketing sensorial."},
