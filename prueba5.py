@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
-import openai
+from openai import OpenAI
 
 # --- VIDEO Y EMOCIONES ---
 import cv2
@@ -163,8 +163,6 @@ if audio_path:
         st.text_area("📝 Transcripción detectada:", transcripcion, height=150)
     except Exception as e:
         st.warning(f"⚠️ No se pudo transcribir el audio: {e}")
-
-from openai import OpenAI
 
 # Crear cliente OpenAI usando API key desde Streamlit Secrets
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
