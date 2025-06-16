@@ -165,10 +165,9 @@ if audio_path:
         st.warning(f"⚠️ No se pudo transcribir el audio: {e}")
 
 
-# --- Configurar el cliente OpenAI (versión nueva >=1.0.0) ---
-from openai import OpenAI
-
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# --- Configurar el cliente OpenAI con secrets (versión moderna) ---
+import openai
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 try:
     emocion_predominante = df["Emoción dominante"].mode()[0] if not df.empty else "indefinida"
@@ -211,7 +210,7 @@ No repitas la tabla ni la narrativa. Escribe como si entregarás un informe prof
 """
 
     # Solicitud a OpenAI
-    response = client.chat.completions.create(
+    response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "Eres un experto en neuromarketing y marketing sensorial."},
