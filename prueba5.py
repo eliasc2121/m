@@ -165,9 +165,10 @@ if audio_path:
         st.warning(f"⚠️ No se pudo transcribir el audio: {e}")
 
 
-# Configurar el cliente OpenAI (versión nueva >=1.0.0)
 # --- Configurar el cliente OpenAI (versión nueva >=1.0.0) ---
-client = OpenAI(api_key="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")  # 🔑 Reemplaza con tu clave
+from openai import OpenAI
+
+client = OpenAI(api_key="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")  # 🔑 Reemplaza con tu clave segura
 
 try:
     emocion_predominante = df["Emoción dominante"].mode()[0] if not df.empty else "indefinida"
