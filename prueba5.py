@@ -13,9 +13,6 @@ import cv2
 from deepface import DeepFace
 from scipy.signal import butter, lfilter
 
-# --- LLM (NUEVA VERSIÓN OPENAI >= 1.0.0) ---
-from openai import OpenAI
-
 # --- INICIO APP ---
 st.title("🔬 MVP de Neuromarketing - Análisis Facial y BPM por segundo")
 
