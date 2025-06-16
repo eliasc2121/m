@@ -173,7 +173,7 @@ if audio_path:
 # --- Configurar el cliente OpenAI (versión nueva >=1.0.0) ---
 from openai import OpenAI
 
-client = OpenAI()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 try:
     emocion_predominante = df["Emoción dominante"].mode()[0] if not df.empty else "indefinida"
