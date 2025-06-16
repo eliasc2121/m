@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
-from openai import OpenAI
+import openai
 
 # --- VIDEO Y EMOCIONES ---
 import cv2
@@ -163,8 +163,8 @@ if audio_path:
 
 # --- OPENAI GPT ANALYSIS (VERSIÓN NUEVA API >= 1.0.0) ---
 
-# Crear cliente con clave desde st.secrets
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# Configura tu clave con st.secrets
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 try:
     emocion_predominante = df["Emoción dominante"].mode()[0] if not df.empty else "indefinida"
@@ -204,7 +204,7 @@ Entrega un análisis estructurado con:
 No repitas la tabla ni la narrativa. Escribe como si entregaras un informe profesional a una marca global.
 """
 
-    response = client.chat.completions.create(
+    response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "Eres un experto en neuromarketing y marketing sensorial."},
@@ -214,7 +214,7 @@ No repitas la tabla ni la narrativa. Escribe como si entregaras un informe profe
         max_tokens=1000
     )
 
-    resultado = response.choices[0].message.content
+    resultado = response["choices"][0]["message"]["content"]
     st.markdown("### 📋 Informe profesional generado por IA:")
     st.markdown(resultado)
 
