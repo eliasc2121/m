@@ -6,7 +6,6 @@ returns and volatility of the market proxy (SPY).
 
 import numpy as np
 import pandas as pd
-import yfinance as yf
 
 from trading_system.config import (
     MARKET_PROXY, REGIME_LOOKBACK,
@@ -17,9 +16,8 @@ from trading_system.config import (
 
 
 def _download_proxy(start: str = START_DATE, end: str = END_DATE) -> pd.Series:
-    ticker = yf.download(MARKET_PROXY, start=start, end=end,
-                         auto_adjust=True, progress=False)
-    return ticker["Close"].squeeze()
+    from trading_system.data_fetcher import download_close_series
+    return download_close_series(MARKET_PROXY, start, end)
 
 
 def compute_regime_series(

@@ -7,13 +7,13 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-import yfinance as yf
 
 from trading_system.config import (
     SP500_UNIVERSE, START_DATE, END_DATE, FORWARD_RETURN_DAYS
 )
 from trading_system.technical_indicators import add_all_indicators
 from trading_system.regime_detector import compute_regime_series
+from trading_system.data_fetcher import download_prices  # noqa: F401 – re-exported
 
 
 # ── Indicator feature columns used by the model ───────────────────────────────
@@ -38,22 +38,8 @@ def download_prices(
     end: str   = END_DATE,
 ) -> dict[str, pd.DataFrame]:
     """Download OHLCV for each ticker and return dict[ticker → DataFrame]."""
-    price_data: dict[str, pd.DataFrame] = {}
-    for ticker in tickers:
-        try:
-            df = yf.download(
-                ticker, start=start, end=end,
-                auto_adjust=True, progress=False,
-            )
-            if df.empty or len(df) < 60:
-                continue
-            df.columns = df.columns.get_level_values(0) if isinstance(
-                df.columns, pd.MultiIndex) else df.columns
-            df.index = pd.to_datetime(df.index)
-            price_data[ticker] = df
-        except Exception:
-            pass
-    return price_data
+    from trading_system.data_fetcher import download_prices as _fetch
+    return _fetch(tickers, start, end)
 
 
 def build_features_for_ticker(

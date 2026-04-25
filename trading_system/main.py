@@ -21,14 +21,12 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-import yfinance as yf
 
 from trading_system.config import (
     SP500_UNIVERSE, START_DATE, END_DATE, INITIAL_CAPITAL, MARKET_PROXY
 )
-from trading_system.feature_engineering import (
-    download_prices, build_full_dataset, split_train_test
-)
+from trading_system.data_fetcher import download_prices, download_close_series
+from trading_system.feature_engineering import build_full_dataset, split_train_test
 from trading_system.regime_detector import compute_regime_series
 from trading_system.sentiment_analyzer import build_sentiment_series
 from trading_system.signal_generator import SignalGenerator
@@ -39,9 +37,7 @@ from trading_system.visualizer import (
 
 
 def download_benchmark(ticker: str, start: str, end: str) -> pd.Series:
-    df = yf.download(ticker, start=start, end=end,
-                     auto_adjust=True, progress=False)
-    return df["Close"].squeeze()
+    return download_close_series(ticker, start, end)
 
 
 def run(n_tickers: int = 20, output_dir: str = "./results") -> None:
