@@ -79,8 +79,11 @@ def download_ohlcv(ticker: str, start: str, end: str) -> pd.DataFrame:
         except Exception as exc:
             warnings.warn(f"FMP failed for {ticker}: {exc} — using synthetic data.")
 
-    from trading_system.synthetic_data import generate_ohlcv
-    return generate_ohlcv(ticker, start, end)
+    # Single-ticker synthetic fallback (shares no market factor with others)
+    from trading_system.synthetic_data import generate_market_proxy, generate_ohlcv as _gen
+    dates    = pd.bdate_range(start=start, end=end)
+    _, mkt   = generate_market_proxy(start, end)
+    return _gen(ticker, mkt, dates)
 
 
 def download_prices(
@@ -88,18 +91,26 @@ def download_prices(
     start: str,
     end: str,
 ) -> dict[str, pd.DataFrame]:
-    use_fmp = _check_network()
-    if not use_fmp:
-        print("  [info] No external network — using calibrated synthetic data.")
-    price_data: dict[str, pd.DataFrame] = {}
-    for ticker in tickers:
-        try:
-            df = download_ohlcv(ticker, start, end)
-            if len(df) >= 60:
-                price_data[ticker] = df
-        except Exception as exc:
-            print(f"  [error] {ticker}: {exc}")
-    return price_data
+    """
+    Download or generate OHLCV for all tickers.
+    When offline, all tickers share the same market factor (realistic co-movement).
+    """
+    if _check_network():
+        price_data: dict[str, pd.DataFrame] = {}
+        for ticker in tickers:
+            try:
+                df = download_ohlcv_fmp(ticker, start, end)
+                if len(df) >= 60:
+                    price_data[ticker] = df
+                else:
+                    print(f"  [skip] {ticker}: only {len(df)} rows from FMP")
+            except Exception as exc:
+                print(f"  [error] {ticker}: {exc}")
+        return price_data
+
+    print("  [info] No external network — generating synthetic data (Markov-switching GBM).")
+    from trading_system.synthetic_data import generate_all
+    return generate_all(tickers, start, end)
 
 
 def download_close_series(ticker: str, start: str, end: str) -> pd.Series:

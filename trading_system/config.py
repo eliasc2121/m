@@ -21,8 +21,8 @@ SP500_UNIVERSE = [
 MARKET_PROXY = "SPY"
 
 # ── Backtest Period ────────────────────────────────────────────────────────────
-START_DATE = "2023-01-01"
-END_DATE   = "2025-01-01"
+START_DATE = "1998-01-01"
+END_DATE   = "2026-04-01"
 INITIAL_CAPITAL = 100_000.0
 
 # ── Technical Indicator Parameters ────────────────────────────────────────────

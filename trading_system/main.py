@@ -77,8 +77,13 @@ def run(n_tickers: int = 20, output_dir: str = "./results") -> None:
 
     # ── 4. Feature engineering ────────────────────────────────────────────────
     print("[4/6] Engineering features …")
+    # Train on 1998-2022, test on 2023-2026
+    TRAIN_END   = "2022-12-31"
+    TEST_START  = "2023-01-01"
+    TEST_END    = END_DATE
+
     panel = build_full_dataset(price_data, regime_series, sentiment_df)
-    train_df, test_df = split_train_test(panel, split_date="2024-07-01")
+    train_df, test_df = split_train_test(panel, split_date=TEST_START)
     print(f"      Panel rows: {len(panel):,}  |  "
           f"Train: {len(train_df):,}  |  Test: {len(test_df):,}")
 
@@ -95,7 +100,7 @@ def run(n_tickers: int = 20, output_dir: str = "./results") -> None:
     plot_feature_importance(fi, save_path=out / "feature_importance.png")
 
     # ── 6. Backtest ───────────────────────────────────────────────────────────
-    print("[6/6] Running backtest on test period (2024-07-01 → 2025-01-01) …")
+    print(f"[6/6] Running backtest on test period ({TEST_START} → {TEST_END}) …")
     backtester = Backtester(
         signal_gen    = sig_gen,
         price_data    = price_data,
@@ -103,7 +108,7 @@ def run(n_tickers: int = 20, output_dir: str = "./results") -> None:
         sentiment_df  = sentiment_df,
         panel         = test_df,
     )
-    result = backtester.run(start="2024-07-01", end="2025-01-01")
+    result = backtester.run(start=TEST_START, end=TEST_END)
 
     print("\n" + str(result))
 
@@ -122,7 +127,7 @@ def run(n_tickers: int = 20, output_dir: str = "./results") -> None:
     benchmarks = {}
     for bm in ["SPY", "QQQ"]:
         try:
-            bm_prices = download_benchmark(bm, "2024-07-01", "2025-01-01")
+            bm_prices = download_benchmark(bm, TEST_START, TEST_END)
             benchmarks[bm] = bm_prices
         except Exception:
             pass

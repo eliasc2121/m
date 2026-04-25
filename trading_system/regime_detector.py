@@ -16,8 +16,12 @@ from trading_system.config import (
 
 
 def _download_proxy(start: str = START_DATE, end: str = END_DATE) -> pd.Series:
-    from trading_system.data_fetcher import download_close_series
-    return download_close_series(MARKET_PROXY, start, end)
+    from trading_system.data_fetcher import _check_network, download_close_series
+    if _check_network():
+        return download_close_series(MARKET_PROXY, start, end)
+    from trading_system.synthetic_data import generate_market_proxy
+    df, _ = generate_market_proxy(start, end)
+    return df["Close"]
 
 
 def compute_regime_series(
