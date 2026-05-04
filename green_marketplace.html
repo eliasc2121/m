@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenTrade - Marketplace de Empresas Sostenibles</title>
+  <style>
+    :root {
+      --green-dark: #1a4731;
+      --green-mid: #2d7a4f;
+      --green-light: #4caf7d;
+      --green-pale: #e8f5e9;
+      --accent: #f9a825;
+      --text: #1c2b1e;
+      --text-light: #5a7060;
+      --white: #ffffff;
+      --gray: #f4f6f4;
+      --border: #d0e4d4;
+      --shadow: 0 2px 12px rgba(45,122,79,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: var(--text);
+      background: var(--gray);
+    }
+
+    /* NAV */
+    nav {
+      background: var(--green-dark);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .logo-leaf { font-size: 26px; }
+
+    .search-bar {
+      flex: 1;
+      display: flex;
+      max-width: 600px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px 0 0 6px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-bar button {
+      background: var(--accent);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      margin-left: auto;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .btn-nav {
+      background: var(--green-light);
+      color: white !important;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+      color: white;
+      padding: 60px 24px;
+      text-align: center;
+    }
+
+    .hero h1 { font-size: 38px; margin-bottom: 12px; }
+    .hero p { font-size: 18px; opacity: 0.85; max-width: 560px; margin: 0 auto 32px; }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; }
+    .stat .num { font-size: 32px; font-weight: 700; color: var(--accent); }
+    .stat .label { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+
+    /* CATEGORIES */
+    .categories {
+      background: var(--white);
+      padding: 28px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .categories h2 { font-size: 18px; margin-bottom: 16px; color: var(--green-dark); }
+
+    .cat-grid {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .cat-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      background: white;
+      color: var(--text);
+    }
+
+    .cat-chip:hover, .cat-chip.active {
+      border-color: var(--green-light);
+      background: var(--green-pale);
+      color: var(--green-dark);
+    }
+
+    .cat-chip .icon { font-size: 18px; }
+
+    /* MAIN LAYOUT */
+    .main {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+      gap: 24px;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+    }
+
+    .filter-box {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .filter-box h3 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-light);
+      margin-bottom: 14px;
+    }
+
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .filter-option input[type="checkbox"] {
+      accent-color: var(--green-mid);
+      width: 16px;
+      height: 16px;
+    }
+
+    .cert-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* PRODUCT GRID */
+    .content { flex: 1; min-width: 0; }
+
+    .results-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .results-bar span { font-size: 14px; color: var(--text-light); }
+
+    .sort-select {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .product-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(45,122,79,0.18);
+    }
+
+    .product-img {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      position: relative;
+    }
+
+    .eco-score {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--green-mid);
+      color: white;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .eco-score.gold { background: #e65100; }
+    .eco-score.platinum { background: #1a237e; }
+
+    .product-body { padding: 14px; }
+
+    .product-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .product-company {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .verified-icon { color: var(--green-mid); font-size: 14px; }
+
+    .product-certs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .product-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 4px;
+    }
+
+    .product-moq {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-bottom: 10px;
+    }
+
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    .origin-flag { font-size: 13px; color: var(--text-light); }
+
+    .btn-contact {
+      background: var(--green-mid);
+      color: white;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-contact:hover { background: var(--green-dark); }
+
+    /* TRUST BANNER */
+    .trust-banner {
+      background: var(--green-pale);
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--green-dark);
+    }
+
+    .trust-icon { font-size: 24px; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 520px;
+      width: 90%;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--text-light);
+      background: none;
+      border: none;
+    }
+
+    .modal h2 { font-size: 22px; margin-bottom: 6px; color: var(--green-dark); }
+    .modal .modal-company { font-size: 14px; color: var(--text-light); margin-bottom: 20px; }
+
+    .modal-emoji { font-size: 60px; text-align: center; margin-bottom: 16px; }
+
+    .modal-detail { margin-bottom: 12px; }
+    .modal-detail label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-light); display: block; margin-bottom: 3px; }
+    .modal-detail p { font-size: 15px; }
+
+    .modal-certs { display: flex; gap: 6px; flex-wrap: wrap; margin: 16px 0; }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+
+    .contact-form textarea { height: 90px; resize: vertical; }
+
+    .btn-send {
+      width: 100%;
+      background: var(--green-mid);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-send:hover { background: var(--green-dark); }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--green-dark);
+      color: white;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.4s;
+      z-index: 300;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .hero h1 { font-size: 26px; }
+      .hero-stats { gap: 24px; }
+      .main { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span class="logo-leaf">🌿</span> GreenTrade</div>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Buscar productos sostenibles..." oninput="filterProducts()">
+    <button onclick="filterProducts()">Buscar</button>
+  </div>
+  <div class="nav-links">
+    <a onclick="showSection('home')">Inicio</a>
+    <a onclick="showSection('sell')">Vender</a>
+    <a onclick="showSection('about')">Nosotros</a>
+    <a class="btn-nav" onclick="showSection('register')">Registrarse</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>El mercado global de empresas sostenibles</h1>
+  <p>Conectamos compradores con proveedores verificados que cumplen estándares ambientales reales.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="num">12,400+</div><div class="label">Proveedores Verificados</div></div>
+    <div class="stat"><div class="num">86</div><div class="label">Países</div></div>
+    <div class="stat"><div class="num">340K</div><div class="label">Productos Eco</div></div>
+    <div class="stat"><div class="num">98%</div><div class="label">CO₂ Reducido vs. Convencional</div></div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories">
+  <h2>Explorar por categoria</h2>
+  <div class="cat-grid" id="catGrid">
+    <div class="cat-chip active" onclick="setCategory('all', this)"><span class="icon">🌍</span> Todos</div>
+    <div class="cat-chip" onclick="setCategory('energia', this)"><span class="icon">☀️</span> Energía Limpia</div>
+    <div class="cat-chip" onclick="setCategory('packaging', this)"><span class="icon">♻️</span> Packaging Verde</div>
+    <div class="cat-chip" onclick="setCategory('textil', this)"><span class="icon">🧵</span> Textil Sostenible</div>
+    <div class="cat-chip" onclick="setCategory('alimentos', this)"><span class="icon">🌱</span> Alimentos Orgánicos</div>
+    <div class="cat-chip" onclick="setCategory('construccion', this)"><span class="icon">🏗️</span> Construcción Verde</div>
+    <div class="cat-chip" onclick="setCategory('agua', this)"><span class="icon">💧</span> Gestión del Agua</div>
+    <div class="cat-chip" onclick="setCategory('movilidad', this)"><span class="icon">🚲</span> Movilidad Limpia</div>
+    <div class="cat-chip" onclick="setCategory('tecnologia', this)"><span class="icon">💡</span> Tecnología Verde</div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="filter-box">
+      <h3>Certificaciones</h3>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> <span class="cert-badge">ISO 14001</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> <span class="cert-badge">FSC</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> <span class="cert-badge">B Corp</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> <span class="cert-badge">Fairtrade</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> <span class="cert-badge">EU Eco</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> <span class="cert-badge">GOTS</span></label>
+    </div>
+
+    <div class="filter-box">
+      <h3>Eco Score</h3>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> Platinum (95-100)</label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> Gold (85-94)</label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> Silver (70-84)</label>
+    </div>
+
+    <div class="filter-box">
+      <h3>Región</h3>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> Europa</label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> América Latina</label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> Asia-Pacífico</label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> África</label>
+    </div>
+
+    <div class="filter-box">
+      <h3>Pedido Mínimo</h3>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> Menos de 100 uds</label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> 100 – 1,000 uds</label>
+      <label class="filter-option"><input type="checkbox" onchange="filterProducts()"> Más de 1,000 uds</label>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <section class="content">
+    <div class="results-bar">
+      <span id="resultsCount">Mostrando 12 productos</span>
+      <select class="sort-select" onchange="filterProducts()">
+        <option>Más relevantes</option>
+        <option>Eco Score ↓</option>
+        <option>Precio: menor a mayor</option>
+        <option>Precio: mayor a menor</option>
+      </select>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+</div>
+
+<!-- TRUST BANNER -->
+<div class="trust-banner">
+  <div class="trust-item"><span class="trust-icon">🔍</span> Proveedores auditados independientemente</div>
+  <div class="trust-item"><span class="trust-icon">🌡️</span> Huella de carbono verificada por producto</div>
+  <div class="trust-item"><span class="trust-icon">🤝</span> Pago seguro con protección al comprador</div>
+  <div class="trust-item"><span class="trust-icon">📜</span> Certificaciones validadas en tiempo real</div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const PRODUCTS = [
+    {
+      id: 1,
+      emoji: "🌞",
+      name: "Panel Solar Flexible 200W",
+      company: "SolarGreen S.A.",
+      country: "🇩🇪 Alemania",
+      category: "energia",
+      price: "$89.00",
+      moq: "MOQ: 50 unidades",
+      certs: ["ISO 14001", "EU Eco"],
+      ecoScore: 97,
+      ecoTier: "platinum",
+      description: "Panel solar monocristalino flexible con eficiencia del 22.3%. Fabricación con energía 100% renovable, cero residuos en producción.",
+      co2: "0.8 kg CO₂ / unidad vs. 12 kg convencional"
+    },
+    {
+      id: 2,
+      emoji: "📦",
+      name: "Caja de Embalaje 100% Reciclado",
+      company: "EcoPack Colombia",
+      country: "🇨🇴 Colombia",
+      category: "packaging",
+      price: "$0.42",
+      moq: "MOQ: 500 unidades",
+      certs: ["FSC", "B Corp"],
+      ecoScore: 91,
+      ecoTier: "gold",
+      description: "Cajas de cartón corrugado fabricadas 100% con fibra reciclada post-consumo. Tintas vegetales sin solventes. Biodegradable en 90 días.",
+      co2: "0.05 kg CO₂ / unidad vs. 0.4 kg convencional"
+    },
+    {
+      id: 3,
+      emoji: "👕",
+      name: "Tela de Algodón Orgánico (por metro)",
+      company: "GreenThread India",
+      country: "🇮🇳 India",
+      category: "textil",
+      price: "$3.80",
+      moq: "MOQ: 200 metros",
+      certs: ["GOTS", "Fairtrade"],
+      ecoScore: 88,
+      ecoTier: "gold",
+      description: "Algodón 100% orgánico certificado GOTS. Sin pesticidas, sin colorantes azo. Trazabilidad completa desde el campo hasta la fábrica.",
+      co2: "1.1 kg CO₂/m vs. 5.9 kg convencional"
+    },
+    {
+      id: 4,
+      emoji: "🍫",
+      name: "Cacao Orgánico en Polvo",
+      company: "Amazonia Coop",
+      country: "🇵🇪 Perú",
+      category: "alimentos",
+      price: "$4.20",
+      moq: "MOQ: 25 kg",
+      certs: ["Fairtrade", "B Corp"],
+      ecoScore: 95,
+      ecoTier: "platinum",
+      description: "Cacao cultivado en agroforestería por cooperativas indígenas. Certificación de comercio justo. Sin deforestación, carbono neto positivo.",
+      co2: "-2.1 kg CO₂ / kg (captura neta)"
+    },
+    {
+      id: 5,
+      emoji: "🧱",
+      name: "Bloque de Construcción Hempcrete",
+      company: "HempBuild NL",
+      country: "🇳🇱 Países Bajos",
+      category: "construccion",
+      price: "$2.10",
+      moq: "MOQ: 1,000 bloques",
+      certs: ["ISO 14001", "EU Eco"],
+      ecoScore: 93,
+      ecoTier: "platinum",
+      description: "Material de construcción con cáñamo y cal. R-valor 2.7/pulgada, ignífugo natural, captura CO₂ durante décadas. 6x más liviano que el hormigón.",
+      co2: "-0.4 kg CO₂ / bloque (carbono negativo)"
+    },
+    {
+      id: 6,
+      emoji: "💧",
+      name: "Sistema de Filtración Solar de Agua",
+      company: "AquaSol Kenya",
+      country: "🇰🇪 Kenia",
+      category: "agua",
+      price: "$340.00",
+      moq: "MOQ: 5 unidades",
+      certs: ["ISO 14001", "B Corp"],
+      ecoScore: 96,
+      ecoTier: "platinum",
+      description: "Sistema de purificación de agua que funciona únicamente con energía solar. Capacidad 2,000 L/día. Sin químicos, sin red eléctrica.",
+      co2: "Elimina 4.5 toneladas CO₂ eq/año por unidad"
+    },
+    {
+      id: 7,
+      emoji: "🚲",
+      name: "Cargo e-Bike para Última Milla",
+      company: "VerdeCycles España",
+      country: "🇪🇸 España",
+      category: "movilidad",
+      price: "$1,890.00",
+      moq: "MOQ: 3 unidades",
+      certs: ["ISO 14001", "EU Eco"],
+      ecoScore: 90,
+      ecoTier: "gold",
+      description: "Bicicleta de carga eléctrica con batería de iones de litio reciclados. Capacidad 180 kg de carga. Fabricación local con acero reciclado.",
+      co2: "Reemplaza 2.3 toneladas CO₂/año vs. furgoneta diesel"
+    },
+    {
+      id: 8,
+      emoji: "🔋",
+      name: "Batería de Almacenamiento V2G",
+      company: "NovEnergy Brasil",
+      country: "🇧🇷 Brasil",
+      category: "energia",
+      price: "$4,200.00",
+      moq: "MOQ: 1 unidad",
+      certs: ["ISO 14001", "B Corp"],
+      ecoScore: 85,
+      ecoTier: "gold",
+      description: "Sistema de almacenamiento de energía con celdas LFP sin cobalto. Compatible con carga bidireccional V2G. Garantía 10 años / 6,000 ciclos.",
+      co2: "Permite integrar 4.8 MWh de renovable por unidad/año"
+    },
+    {
+      id: 9,
+      emoji: "🌿",
+      name: "Bioplástico PHA a Granel",
+      company: "BioCycle Canada",
+      country: "🇨🇦 Canadá",
+      category: "packaging",
+      price: "$5.60",
+      moq: "MOQ: 100 kg",
+      certs: ["FSC", "EU Eco"],
+      ecoScore: 92,
+      ecoTier: "platinum",
+      description: "Polihidroxialcanoato (PHA) producido por fermentación microbiana de residuos agrícolas. Biodegradable en el mar en 18 meses. Sin BPA.",
+      co2: "1.2 kg CO₂ / kg vs. 6 kg plástico convencional"
+    },
+    {
+      id: 10,
+      emoji: "☁️",
+      name: "Software de Huella de Carbono SaaS",
+      company: "CarbonTrack EU",
+      country: "🇸🇪 Suecia",
+      category: "tecnologia",
+      price: "$299/mes",
+      moq: "MOQ: 1 licencia",
+      certs: ["ISO 14001", "B Corp"],
+      ecoScore: 89,
+      ecoTier: "gold",
+      description: "Plataforma SaaS para medir, reportar y reducir la huella de carbono de cadena de suministro. Compatible con GHG Protocol, CSRD e ISO 14064.",
+      co2: "Servidores con 100% energía renovable. PUE 1.09"
+    },
+    {
+      id: 11,
+      emoji: "🏠",
+      name: "Panel de Bambú para Interiores",
+      company: "BambooWorks Vietnam",
+      country: "🇻🇳 Vietnam",
+      category: "construccion",
+      price: "$18.50",
+      moq: "MOQ: 50 m²",
+      certs: ["FSC", "Fairtrade"],
+      ecoScore: 87,
+      ecoTier: "gold",
+      description: "Panel decorativo/estructural de bambú moso de crecimiento rápido (5 años). Sin formaldehído, adhesivos a base de agua. Dureza Janka 1,380 lbs.",
+      co2: "Captura 5 kg CO₂ por m² de panel producido"
+    },
+    {
+      id: 12,
+      emoji: "💊",
+      name: "Envase Farmacéutico Bioplástico",
+      company: "GreenPharma Italia",
+      country: "🇮🇹 Italia",
+      category: "packaging",
+      price: "$0.08",
+      moq: "MOQ: 10,000 uds",
+      certs: ["ISO 14001", "EU Eco"],
+      ecoScore: 78,
+      ecoTier: "silver",
+      description: "Envase primario para farmacéuticos fabricado con PLA de origen biológico. Certificado para contacto alimentario. Compatible con líneas de envasado estándar.",
+      co2: "0.02 kg CO₂ / unidad vs. 0.09 kg convencional"
+    }
+  ];
+
+  let currentCategory = 'all';
+
+  function setCategory(cat, el) {
+    currentCategory = cat;
+    document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    filterProducts();
+  }
+
+  function filterProducts() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    let filtered = PRODUCTS;
+
+    if (currentCategory !== 'all') {
+      filtered = filtered.filter(p => p.category === currentCategory);
+    }
+
+    if (query) {
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.company.toLowerCase().includes(query) ||
+        p.certs.some(c => c.toLowerCase().includes(query))
+      );
+    }
+
+    renderProducts(filtered);
+  }
+
+  function renderProducts(products) {
+    const grid = document.getElementById('productGrid');
+    document.getElementById('resultsCount').textContent = `Mostrando ${products.length} producto${products.length !== 1 ? 's' : ''}`;
+
+    if (products.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-light);">No se encontraron productos para esta búsqueda.</div>';
+      return;
+    }
+
+    grid.innerHTML = products.map(p => `
+      <div class="product-card" onclick="openModal(${p.id})">
+        <div class="product-img" style="background:${bgColor(p.category)}">
+          ${p.emoji}
+          <span class="eco-score ${p.ecoTier}">Eco ${p.ecoScore}</span>
+        </div>
+        <div class="product-body">
+          <div class="product-name">${p.name}</div>
+          <div class="product-company">
+            <span class="verified-icon">✓</span> ${p.company}
+          </div>
+          <div class="product-certs">
+            ${p.certs.map(c => `<span class="cert-badge">${c}</span>`).join('')}
+          </div>
+          <div class="product-price">${p.price}</div>
+          <div class="product-moq">${p.moq}</div>
+          <div class="product-footer">
+            <span class="origin-flag">${p.country}</span>
+            <button class="btn-contact" onclick="event.stopPropagation(); openModal(${p.id})">Contactar</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function bgColor(cat) {
+    const map = {
+      energia: '#fff8e1', packaging: '#e8f5e9', textil: '#fce4ec',
+      alimentos: '#f1f8e9', construccion: '#fff3e0', agua: '#e3f2fd',
+      movilidad: '#f3e5f5', tecnologia: '#e0f7fa'
+    };
+    return map[cat] || '#f4f6f4';
+  }
+
+  function openModal(id) {
+    const p = PRODUCTS.find(x => x.id === id);
+    if (!p) return;
+
+    document.getElementById('modalBody').innerHTML = `
+      <div class="modal-emoji">${p.emoji}</div>
+      <h2>${p.name}</h2>
+      <p class="modal-company"><span style="color:var(--green-mid)">✓ Proveedor verificado</span> &nbsp;·&nbsp; ${p.country}</p>
+      <div class="modal-certs">${p.certs.map(c => `<span class="cert-badge">${c}</span>`).join('')}</div>
+      <div class="modal-detail"><label>Descripción</label><p>${p.description}</p></div>
+      <div class="modal-detail"><label>Impacto climático</label><p>🌡️ ${p.co2}</p></div>
+      <div class="modal-detail"><label>Precio referencial</label><p style="font-size:22px;font-weight:700;color:var(--green-dark)">${p.price} &nbsp;<span style="font-size:14px;font-weight:400;color:var(--text-light)">${p.moq}</span></p></div>
+      <hr style="margin:20px 0;border:none;border-top:1px solid var(--border)">
+      <h3 style="margin-bottom:14px;font-size:16px;">Contactar al proveedor</h3>
+      <div class="contact-form">
+        <input type="text" placeholder="Tu nombre y empresa">
+        <input type="email" placeholder="Email corporativo">
+        <textarea placeholder="Describe tu necesidad, volumen estimado y plazo..."></textarea>
+        <button class="btn-send" onclick="sendInquiry('${p.company}')">Enviar consulta</button>
+      </div>
+    `;
+
+    document.getElementById('productModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('productModal').classList.remove('open');
+  }
+
+  function closeModalOnOverlay(e) {
+    if (e.target === document.getElementById('productModal')) closeModal();
+  }
+
+  function sendInquiry(company) {
+    closeModal();
+    showToast(`Consulta enviada a ${company}. Responden en <24h.`);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function showSection(s) {
+    const msgs = {
+      sell: 'Módulo "Vender" próximamente disponible.',
+      about: 'GreenTrade — construido para acelerar la transición a una economía verde.',
+      register: 'Registro de proveedores: próximamente.'
+    };
+    if (msgs[s]) showToast(msgs[s]);
+  }
+
+  // Initial render
+  renderProducts(PRODUCTS);
+</script>
+</body>
+</html>
